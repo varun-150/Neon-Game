@@ -1,0 +1,8 @@
+.agent/
+.agents/
+.qodo/
+.vscode/
+skills-lock.json
+node_modules/
+*.log
+.DS_Store

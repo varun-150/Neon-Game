@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Neon Pulse: Architect — A high-octane cyberpunk survival shooter">
+  <title>Neon Pulse | Architect</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+</head>
+
+<body>
+  <div id="gameContainer">
+    <canvas id="gameCanvas" width="1280" height="720"></canvas>
+
+    <div id="ui-layer">
+
+      <!-- ═══ START MENU ═══ -->
+      <div id="startMenu" class="screen">
+        <div class="glass-panel menu-panel">
+          <div class="title-block">
+            <div class="title-pre">// SYSTEM ONLINE</div>
+            <h1 class="neon-title">NEON<span class="title-accent">PULSE</span></h1>
+            <p class="title-tagline">STRIKE FAST · SURVIVE THE VOID</p>
+          </div>
+          <div class="menu-buttons">
+            <button id="playBtn" class="btn-primary btn-glow">
+              ENGAGE
+            </button>
+            <button id="settingsBtn" class="btn-secondary btn-outline">
+              SETTINGS
+            </button>
+          </div>
+          <div class="menu-controls-bottom">
+            <div class="control-hint"><span>WASD</span> NAVIGATE</div>
+            <div class="control-hint"><span>AIM + SHOOT</span></div>
+            <div class="control-hint"><span>ESC</span> PAUSE</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ LEVEL SELECT ═══ -->
+      <div id="levelsMenu" class="screen hidden">
+        <div class="glass-panel levels-panel">
+          <h2 class="panel-title">SELECT PROTOCOL</h2>
+          <div class="levels-grid">
+
+            <div class="level-card" data-difficulty="1">
+              <div class="level-badge" style="--card-color: #00ff88">01</div>
+              <div class="level-info">
+                <div class="level-name" style="color: #00ff88">RECON</div>
+                <div class="level-subtitle">Training Protocol</div>
+                <div class="level-desc">Slower enemies · More health · Gentle spawns</div>
+              </div>
+              <div class="level-meta">
+                <div class="level-highscore">NO DATA</div>
+                <div class="level-arrow">→</div>
+              </div>
+            </div>
+
+            <div class="level-card" data-difficulty="2">
+              <div class="level-badge" style="--card-color: #00f2ff">02</div>
+              <div class="level-info">
+                <div class="level-name" style="color: #00f2ff">ASSAULT</div>
+                <div class="level-subtitle">Standard Engagement</div>
+                <div class="level-desc">Balanced combat · Default parameters</div>
+              </div>
+              <div class="level-meta">
+                <div class="level-highscore">NO DATA</div>
+                <div class="level-arrow">→</div>
+              </div>
+            </div>
+
+            <div class="level-card" data-difficulty="3">
+              <div class="level-badge" style="--card-color: #ff00ff">03</div>
+              <div class="level-info">
+                <div class="level-name" style="color: #ff00ff">BLITZ</div>
+                <div class="level-subtitle">Accelerated Threat</div>
+                <div class="level-desc">Fast enemies · Dense spawns · Adrenaline rush</div>
+              </div>
+              <div class="level-meta">
+                <div class="level-highscore">UNLOCK AT 500 PTS</div>
+                <div class="level-arrow">🔒</div>
+              </div>
+            </div>
+
+            <div class="level-card" data-difficulty="4">
+              <div class="level-badge" style="--card-color: #ff0000">04</div>
+              <div class="level-info">
+                <div class="level-name" style="color: #ff0000">NIGHTMARE</div>
+                <div class="level-subtitle">Extinction Protocol</div>
+                <div class="level-desc">Tank enemies · Maximum aggression · No mercy</div>
+              </div>
+              <div class="level-meta">
+                <div class="level-highscore">UNLOCK AT 2000 PTS</div>
+                <div class="level-arrow">🔒</div>
+              </div>
+            </div>
+
+          </div>
+          <button id="levelsBackBtn" class="btn-ghost">← BACK</button>
+        </div>
+      </div>
+
+      <!-- ═══ SETTINGS ═══ -->
+      <div id="settingsMenu" class="screen hidden">
+        <div class="glass-panel settings-panel">
+          <h2 class="panel-title">SYSTEM CONFIG</h2>
+          <div class="settings-grid">
+            <div class="setting-group">
+              <div class="setting-header">
+                <label class="setting-label">Cursor Sensitivity</label>
+                <span id="sensitivityValue" class="setting-value">1.0</span>
+              </div>
+              <input type="range" id="sensitivitySlider" class="neon-slider" min="0.2" max="3.0" step="0.1" value="1.0">
+              <div class="setting-hint">Low = precise · High = fast sweep</div>
+            </div>
+            <div class="setting-group">
+              <div class="setting-header">
+                <label class="setting-label">Cursor Smoothing</label>
+                <span id="smoothingValue" class="setting-value">0.3</span>
+              </div>
+              <input type="range" id="smoothingSlider" class="neon-slider" min="0.0" max="0.9" step="0.1" value="0.3">
+              <div class="setting-hint">0 = raw input · Higher = smoother</div>
+            </div>
+            <div class="setting-group">
+              <div class="setting-header">
+                <label class="setting-label">Particle Density</label>
+                <span id="particleValue" class="setting-value">1.0</span>
+              </div>
+              <input type="range" id="particleSlider" class="neon-slider neon-slider-pink" min="0.3" max="2.0" step="0.1" value="1.0">
+              <div class="setting-hint">Lower = performance · Higher = eye candy</div>
+            </div>
+
+            <!-- Audio Section -->
+            <div class="settings-divider">AUDIO</div>
+            <div class="setting-group">
+              <div class="setting-header">
+                <label class="setting-label">🔊 Master Volume</label>
+                <span id="masterValue" class="setting-value">0.7</span>
+              </div>
+              <input type="range" id="masterSlider" class="neon-slider neon-slider-green" min="0.0" max="1.0" step="0.1" value="0.7">
+            </div>
+            <div class="setting-group">
+              <div class="setting-header">
+                <label class="setting-label">💥 SFX Volume</label>
+                <span id="sfxValue" class="setting-value">0.8</span>
+              </div>
+              <input type="range" id="sfxSlider" class="neon-slider neon-slider-green" min="0.0" max="1.0" step="0.1" value="0.8">
+            </div>
+            <div class="setting-group">
+              <div class="setting-header">
+                <label class="setting-label">🎵 Music Volume</label>
+                <span id="musicValue" class="setting-value">0.4</span>
+              </div>
+              <input type="range" id="musicSlider" class="neon-slider neon-slider-green" min="0.0" max="1.0" step="0.1" value="0.4">
+            </div>
+
+            <div class="setting-group toggles-row">
+              <div class="toggle-item">
+                <label class="toggle-label">Shake</label>
+                <label class="toggle-switch"><input type="checkbox" id="shakeToggle" checked><span class="toggle-slider"></span></label>
+              </div>
+              <div class="toggle-item">
+                <label class="toggle-label">CRT</label>
+                <label class="toggle-switch"><input type="checkbox" id="crtToggle" checked><span class="toggle-slider"></span></label>
+              </div>
+              <div class="toggle-item">
+                <label class="toggle-label">FPS</label>
+                <label class="toggle-switch"><input type="checkbox" id="fpsToggle"><span class="toggle-slider"></span></label>
+              </div>
+            </div>
+          </div>
+          <button id="settingsBackBtn" class="btn-ghost">← BACK</button>
+        </div>
+      </div>
+
+      <!-- ═══ COUNTDOWN ═══ -->
+      <div id="countdown" class="hidden">3</div>
+
+      <!-- ═══ HUD ═══ -->
+      <div id="hud" class="hidden">
+        <div class="hud-left">
+          <div class="hud-group">
+            <div class="stats-label">VITALITY</div>
+            <div id="healthBarContainer">
+              <div id="healthBar"></div>
+            </div>
+          </div>
+        </div>
+        <div class="hud-center">
+          <div id="difficultyIndicator" class="difficulty-badge">ASSAULT</div>
+        </div>
+        <div class="hud-right">
+          <div class="hud-group" style="align-items: flex-end;">
+            <div class="stats-label">SCORE</div>
+            <div id="scoreDisplay" class="stats-value">000000</div>
+            <div id="levelDisplay" class="stats-label level-label">THREAT LV 01</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ GAME OVER ═══ -->
+      <div id="gameOverMenu" class="screen hidden">
+        <div class="glass-panel gameover-panel">
+          <h1 class="gameover-title">PROTOCOL<br><span class="gameover-accent">TERMINATED</span></h1>
+          <div class="gameover-stats">
+            <div class="go-stat">
+              <div class="go-stat-label">DIFFICULTY</div>
+              <div id="finalDifficulty" class="go-stat-value">ASSAULT</div>
+            </div>
+            <div class="go-stat">
+              <div class="go-stat-label">FINAL SCORE</div>
+              <div id="finalScore" class="go-stat-value go-score">0</div>
+            </div>
+            <div class="go-stat">
+              <div class="go-stat-label">BEST SCORE</div>
+              <div id="finalHighScore" class="go-stat-value">0</div>
+            </div>
+          </div>
+          <div id="newRecord" class="new-record hidden">★ NEW RECORD ★</div>
+          <div class="menu-buttons">
+            <button id="restartBtn" class="btn-primary"><span class="btn-icon">↻</span> RETRY</button>
+            <button id="restartBtn2" class="btn-ghost">← MENU</button>
+          </div>
+        </div>
+      </div>
+
+      </div>
+
+      <!-- ═══ PAUSE MENU ═══ -->
+      <div id="pauseMenu" class="screen hidden">
+        <div class="glass-panel pause-panel">
+          <h2 class="panel-title">PAUSED</h2>
+          <div class="pause-hint">Press <kbd>ESC</kbd> to resume</div>
+          <div class="menu-buttons">
+            <button id="resumeBtn" class="btn-primary"><span class="btn-icon">▶</span> RESUME</button>
+            <button id="pauseMenuBtn" class="btn-ghost">← MAIN MENU</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="GameObject.js"></script>
+  <script src="InputManager.js"></script>
+  <script src="Player.js"></script>
+  <script src="Bullet.js"></script>
+  <script src="Chaser.js"></script>
+  <script src="Wanderer.js"></script>
+  <script src="Hunter.js"></script>
+  <script src="Collectible.js"></script>
+  <script src="Particle.js"></script>
+  <script src="SoundManager.js"></script>
+  <script src="Game.js"></script>
+  <script>
+    const canvas = document.getElementById('gameCanvas');
+    const game = new Game(canvas);
+    window.game = game;
+    game.start();
+  </script>
+</body>
+
+</html>
