@@ -7,11 +7,14 @@
   <meta name="description" content="Neon Pulse: Architect — A high-octane cyberpunk survival shooter">
   <title>Neon Pulse | Architect</title>
   <link rel="stylesheet" href="style.css">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
 </head>
 
 <body>
   <div id="gameContainer">
+    <div class="grid-vignette"></div>
+    <div class="crt-overlay"></div>
     <canvas id="gameCanvas" width="1280" height="720"></canvas>
 
     <div id="ui-layer">
@@ -22,7 +25,7 @@
           <div class="title-block">
             <div class="title-pre">// SYSTEM ONLINE</div>
             <h1 class="neon-title">NEON<span class="title-accent">PULSE</span></h1>
-            <p class="title-tagline">STRIKE FAST · SURVIVE THE VOID</p>
+            <p class="title-tagline">STRIKE FAST &mdash; SURVIVE THE VOID</p>
           </div>
           <div class="menu-buttons">
             <button id="playBtn" class="btn-primary btn-glow">
@@ -34,7 +37,7 @@
           </div>
           <div class="menu-controls-bottom">
             <div class="control-hint"><span>WASD</span> NAVIGATE</div>
-            <div class="control-hint"><span>AIM + SHOOT</span></div>
+            <div class="control-hint"><span>AIM</span> • <span>SHOOT</span></div>
             <div class="control-hint"><span>ESC</span> PAUSE</div>
           </div>
         </div>
@@ -129,7 +132,8 @@
                 <label class="setting-label">Particle Density</label>
                 <span id="particleValue" class="setting-value">1.0</span>
               </div>
-              <input type="range" id="particleSlider" class="neon-slider neon-slider-pink" min="0.3" max="2.0" step="0.1" value="1.0">
+              <input type="range" id="particleSlider" class="neon-slider neon-slider-pink" min="0.3" max="2.0"
+                step="0.1" value="1.0">
               <div class="setting-hint">Lower = performance · Higher = eye candy</div>
             </div>
 
@@ -140,35 +144,41 @@
                 <label class="setting-label">🔊 Master Volume</label>
                 <span id="masterValue" class="setting-value">0.7</span>
               </div>
-              <input type="range" id="masterSlider" class="neon-slider neon-slider-green" min="0.0" max="1.0" step="0.1" value="0.7">
+              <input type="range" id="masterSlider" class="neon-slider neon-slider-green" min="0.0" max="1.0" step="0.1"
+                value="0.7">
             </div>
             <div class="setting-group">
               <div class="setting-header">
                 <label class="setting-label">💥 SFX Volume</label>
                 <span id="sfxValue" class="setting-value">0.8</span>
               </div>
-              <input type="range" id="sfxSlider" class="neon-slider neon-slider-green" min="0.0" max="1.0" step="0.1" value="0.8">
+              <input type="range" id="sfxSlider" class="neon-slider neon-slider-green" min="0.0" max="1.0" step="0.1"
+                value="0.8">
             </div>
             <div class="setting-group">
               <div class="setting-header">
                 <label class="setting-label">🎵 Music Volume</label>
                 <span id="musicValue" class="setting-value">0.4</span>
               </div>
-              <input type="range" id="musicSlider" class="neon-slider neon-slider-green" min="0.0" max="1.0" step="0.1" value="0.4">
+              <input type="range" id="musicSlider" class="neon-slider neon-slider-green" min="0.0" max="1.0" step="0.1"
+                value="0.4">
             </div>
 
             <div class="setting-group toggles-row">
               <div class="toggle-item">
                 <label class="toggle-label">Shake</label>
-                <label class="toggle-switch"><input type="checkbox" id="shakeToggle" checked><span class="toggle-slider"></span></label>
+                <label class="toggle-switch"><input type="checkbox" id="shakeToggle" checked><span
+                    class="toggle-slider"></span></label>
               </div>
               <div class="toggle-item">
                 <label class="toggle-label">CRT</label>
-                <label class="toggle-switch"><input type="checkbox" id="crtToggle" checked><span class="toggle-slider"></span></label>
+                <label class="toggle-switch"><input type="checkbox" id="crtToggle" checked><span
+                    class="toggle-slider"></span></label>
               </div>
               <div class="toggle-item">
                 <label class="toggle-label">FPS</label>
-                <label class="toggle-switch"><input type="checkbox" id="fpsToggle"><span class="toggle-slider"></span></label>
+                <label class="toggle-switch"><input type="checkbox" id="fpsToggle"><span
+                    class="toggle-slider"></span></label>
               </div>
             </div>
           </div>
@@ -227,21 +237,21 @@
         </div>
       </div>
 
-      </div>
+    </div>
 
-      <!-- ═══ PAUSE MENU ═══ -->
-      <div id="pauseMenu" class="screen hidden">
-        <div class="glass-panel pause-panel">
-          <h2 class="panel-title">PAUSED</h2>
-          <div class="pause-hint">Press <kbd>ESC</kbd> to resume</div>
-          <div class="menu-buttons">
-            <button id="resumeBtn" class="btn-primary"><span class="btn-icon">▶</span> RESUME</button>
-            <button id="pauseMenuBtn" class="btn-ghost">← MAIN MENU</button>
-          </div>
+    <!-- ═══ PAUSE MENU ═══ -->
+    <div id="pauseMenu" class="screen hidden">
+      <div class="glass-panel pause-panel">
+        <h2 class="panel-title">PAUSED</h2>
+        <div class="pause-hint">Press <kbd>ESC</kbd> to resume</div>
+        <div class="menu-buttons">
+          <button id="resumeBtn" class="btn-primary"><span class="btn-icon">▶</span> RESUME</button>
+          <button id="pauseMenuBtn" class="btn-ghost">← MAIN MENU</button>
         </div>
       </div>
-
     </div>
+
+  </div>
   </div>
 
   <script src="GameObject.js"></script>
