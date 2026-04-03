@@ -15,6 +15,7 @@ class Game {
 
     // Settings
     this.settings = {
+      theme: 'neon',
       sensitivity: 1.0,
       smoothing: 0.3,
       screenShakeEnabled: true,
@@ -202,6 +203,15 @@ class Game {
 
     // Settings
     document.getElementById('settingsBackBtn').onclick = () => { this.sound.menuClick(); this.closeSettings(); };
+    const themeBtn = document.getElementById('themeToggleBtn');
+    if (themeBtn) {
+      themeBtn.onclick = () => {
+        this.sound.menuClick();
+        this.settings.theme = this.settings.theme === 'neon' ? 'aircraft' : 'neon';
+        this.saveSettings();
+        this.applySettingsToUI();
+      };
+    }
     this.wireSlider('sensitivitySlider', 'sensitivityValue', v => { this.settings.sensitivity = v; this.input.sensitivity = v; });
     this.wireSlider('smoothingSlider', 'smoothingValue', v => { this.settings.smoothing = v; this.input.smoothing = v; });
     this.wireSlider('particleSlider', 'particleValue', v => { this.settings.particleDensity = v; });
@@ -249,6 +259,9 @@ class Game {
       const el = document.getElementById(id);
       if (el) el.checked = vals[i];
     });
+    const themeBtn = document.getElementById('themeToggleBtn');
+    if (themeBtn) themeBtn.innerText = s.theme === 'aircraft' ? 'AIRCRAFT' : 'NEON';
+    
     this.input.sensitivity = s.sensitivity;
     this.input.smoothing = s.smoothing;
     this.sound.setMasterVolume(s.masterVolume);
@@ -620,38 +633,58 @@ class Game {
   draw() {
     const ctx = this.ctx, w = this.canvas.width, h = this.canvas.height;
 
-    // Background gradient
-    const bg = ctx.createLinearGradient(0, 0, 0, h);
-    bg.addColorStop(0, '#020210'); bg.addColorStop(0.5, '#050515'); bg.addColorStop(1, '#080820');
-    ctx.fillStyle = bg; ctx.fillRect(0, 0, w, h);
+    if (this.settings.theme === 'aircraft') {
+      const bg = ctx.createLinearGradient(0, 0, 0, h);
+      bg.addColorStop(0, '#55aaff'); bg.addColorStop(1, '#aabbdd');
+      ctx.fillStyle = bg; ctx.fillRect(0, 0, w, h);
+      ctx.save();
+      if (this.screenShake > 0 && this.settings.screenShakeEnabled) {
+        ctx.translate((Math.random() - 0.5) * this.screenShake, (Math.random() - 0.5) * this.screenShake);
+      }
+      // Draw clouds using stars
+      ctx.fillStyle = 'rgba(255,255,255,0.7)';
+      for (const s of this.stars) {
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.size * 5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(s.x + s.size*3, s.y + s.size*2, s.size * 4, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    } else {
+      // Background gradient
+      const bg = ctx.createLinearGradient(0, 0, 0, h);
+      bg.addColorStop(0, '#020210'); bg.addColorStop(0.5, '#050515'); bg.addColorStop(1, '#080820');
+      ctx.fillStyle = bg; ctx.fillRect(0, 0, w, h);
 
-    ctx.save();
-    if (this.screenShake > 0 && this.settings.screenShakeEnabled) {
-      ctx.translate((Math.random() - 0.5) * this.screenShake, (Math.random() - 0.5) * this.screenShake);
+      ctx.save();
+      if (this.screenShake > 0 && this.settings.screenShakeEnabled) {
+        ctx.translate((Math.random() - 0.5) * this.screenShake, (Math.random() - 0.5) * this.screenShake);
+      }
+
+      // Nebula
+      for (const c of this.nebulaClouds) {
+        const g = ctx.createRadialGradient(c.x, c.y, 0, c.x, c.y, c.radius);
+        g.addColorStop(0, c.color + c.opacity + ')'); g.addColorStop(1, c.color + '0)');
+        ctx.fillStyle = g; ctx.beginPath(); ctx.arc(c.x, c.y, c.radius, 0, Math.PI * 2); ctx.fill();
+      }
+
+      // Stars
+      for (const s of this.stars) {
+        const tw = Math.sin(s.twinklePhase) * 0.5 + 0.5, a = s.opacity * tw;
+        if (s.layer === 2) { ctx.fillStyle = `rgba(120,200,255,${a * 0.3})`; ctx.beginPath(); ctx.arc(s.x, s.y, s.size * 3, 0, Math.PI * 2); ctx.fill(); }
+        ctx.fillStyle = `rgba(180,220,255,${a})`; ctx.fillRect(s.x, s.y, s.size, s.size);
+      }
+
+      // Grid
+      const gp = Math.sin(this.gameTime * 0.8) * 0.04 + 0.08;
+      const gc = this.level >= 3 ? `rgba(255,0,85,${gp})` : this.level >= 2 ? `rgba(200,0,255,${gp})` : `rgba(0,242,255,${gp})`;
+      ctx.strokeStyle = gc; ctx.lineWidth = 1;
+      for (let i = 0; i < w; i += 80) { ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, h); ctx.stroke(); }
+      for (let i = 0; i < h; i += 80) { ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(w, i); ctx.stroke(); }
+      ctx.fillStyle = gc;
+      for (let x = 0; x < w; x += 80) for (let y = 0; y < h; y += 80) ctx.fillRect(x - 1, y - 1, 2, 2);
     }
-
-    // Nebula
-    for (const c of this.nebulaClouds) {
-      const g = ctx.createRadialGradient(c.x, c.y, 0, c.x, c.y, c.radius);
-      g.addColorStop(0, c.color + c.opacity + ')'); g.addColorStop(1, c.color + '0)');
-      ctx.fillStyle = g; ctx.beginPath(); ctx.arc(c.x, c.y, c.radius, 0, Math.PI * 2); ctx.fill();
-    }
-
-    // Stars
-    for (const s of this.stars) {
-      const tw = Math.sin(s.twinklePhase) * 0.5 + 0.5, a = s.opacity * tw;
-      if (s.layer === 2) { ctx.fillStyle = `rgba(120,200,255,${a * 0.3})`; ctx.beginPath(); ctx.arc(s.x, s.y, s.size * 3, 0, Math.PI * 2); ctx.fill(); }
-      ctx.fillStyle = `rgba(180,220,255,${a})`; ctx.fillRect(s.x, s.y, s.size, s.size);
-    }
-
-    // Grid
-    const gp = Math.sin(this.gameTime * 0.8) * 0.04 + 0.08;
-    const gc = this.level >= 3 ? `rgba(255,0,85,${gp})` : this.level >= 2 ? `rgba(200,0,255,${gp})` : `rgba(0,242,255,${gp})`;
-    ctx.strokeStyle = gc; ctx.lineWidth = 1;
-    for (let i = 0; i < w; i += 80) { ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, h); ctx.stroke(); }
-    for (let i = 0; i < h; i += 80) { ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(w, i); ctx.stroke(); }
-    ctx.fillStyle = gc;
-    for (let x = 0; x < w; x += 80) for (let y = 0; y < h; y += 80) ctx.fillRect(x - 1, y - 1, 2, 2);
 
     if (this.state === 'PLAYING' || this.state === 'PAUSED' || this.state === 'GAMEOVER') {
       for (const p of this.particles) p.draw(ctx);

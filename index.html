@@ -21,18 +21,27 @@
 
       <!-- ═══ START MENU ═══ -->
       <div id="startMenu" class="screen">
+        <div class="hero-bg-accent"></div>
+        <div class="hud-corners">
+          <div class="corner tl"></div>
+          <div class="corner tr"></div>
+          <div class="corner bl"></div>
+          <div class="corner br"></div>
+        </div>
+        
         <div class="glass-panel menu-panel">
+          <div class="panel-decor-corners"></div>
           <div class="title-block">
-            <div class="title-pre">// SYSTEM ONLINE</div>
-            <h1 class="neon-title">NEON<span class="title-accent">PULSE</span></h1>
-            <p class="title-tagline">STRIKE FAST &mdash; SURVIVE THE VOID</p>
+            <div class="title-pre">// NEURAL LINK ESTABLISHED</div>
+            <h1 class="neon-title" data-text="NEONPULSE">NEON<span class="title-accent">PULSE</span></h1>
+            <p class="title-tagline">STRIKE FAST &bull; SURVIVE THE VOID</p>
           </div>
           <div class="menu-buttons">
             <button id="playBtn" class="btn-primary btn-glow">
-              ENGAGE
+              <span class="btn-inner">ENGAGE PROTOCOL</span>
             </button>
             <button id="settingsBtn" class="btn-secondary btn-outline">
-              SETTINGS
+              <span class="btn-inner">SYSTEM CONFIG</span>
             </button>
           </div>
           <div class="menu-controls-bottom">
@@ -41,6 +50,7 @@
             <div class="control-hint"><span>ESC</span> PAUSE</div>
           </div>
         </div>
+
       </div>
 
       <!-- ═══ LEVEL SELECT ═══ -->
@@ -135,6 +145,12 @@
               <input type="range" id="particleSlider" class="neon-slider neon-slider-pink" min="0.3" max="2.0"
                 step="0.1" value="1.0">
               <div class="setting-hint">Lower = performance · Higher = eye candy</div>
+            </div>
+
+            <div class="settings-divider">VISUAL PROTOCOL</div>
+            <div class="setting-group" style="display: flex; justify-content: space-between; align-items: center;">
+              <label class="setting-label">AESTHETIC MODE</label>
+              <button id="themeToggleBtn" class="btn-ghost" style="padding: 6px 12px; min-width: auto;">NEON</button>
             </div>
 
             <!-- Audio Section -->
@@ -238,6 +254,17 @@
       </div>
 
     </div>
+
+      <!-- ═══ SYSTEM STATUS (ALWAYS ON) ═══ -->
+      <div class="system-status-bar">
+        <div class="status-ticker">
+          <span class="status-item">// CORE TEMP: OPTIMAL</span>
+          <span class="status-item">// NEURAL SYNC: 98.4%</span>
+          <span class="status-item">// WEAPON SYSTEMS: ARMED</span>
+          <span class="status-item">// SHIELD GENERATOR: ONLINE</span>
+          <span class="status-item">// VOID DRIFT: DETECTED</span>
+        </div>
+      </div>
 
     <!-- ═══ PAUSE MENU ═══ -->
     <div id="pauseMenu" class="screen hidden">

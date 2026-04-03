@@ -78,17 +78,18 @@ class Player extends GameObject {
     const exhaustX = cx - Math.cos(this.angle) * 14;
     const exhaustY = cy - Math.sin(this.angle) * 14;
 
+    const isAircraft = this.game.settings.theme === 'aircraft';
     if (isMoving && Math.random() < 0.6) {
-      this.game.particles.push(new Particle(this.game, exhaustX, exhaustY, '#0ff', {
+      this.game.particles.push(new Particle(this.game, exhaustX, exhaustY, isAircraft ? 'rgba(200,200,200,0.5)' : '#0ff', {
         type: 'circle',
-        size: Math.random() * 4 + 2,
-        speed: 80,
+        size: Math.random() * (isAircraft ? 6 : 4) + 2,
+        speed: isAircraft ? 50 : 80,
         life: 0.4,
         gravity: 0
       }));
     }
     if (Math.random() < 0.15) {
-      this.game.particles.push(new Particle(this.game, exhaustX, exhaustY, '#0088ff', {
+      this.game.particles.push(new Particle(this.game, exhaustX, exhaustY, isAircraft ? 'rgba(150,150,150,0.5)' : '#0088ff', {
         type: 'circle',
         size: Math.random() * 3 + 1,
         speed: 30,
@@ -154,76 +155,112 @@ class Player extends GameObject {
     ctx.translate(this.x + this.width / 2, this.y + this.height / 2);
     ctx.rotate(this.angle);
 
-    // Engine exhaust glow (behind ship)
-    const engineGlow = Math.sin(this.enginePulse) * 0.3 + 0.7;
-    ctx.save();
-    ctx.translate(-14, 0);
-    const exhaust = ctx.createRadialGradient(0, 0, 0, 0, 0, 12 * engineGlow);
-    exhaust.addColorStop(0, 'rgba(0, 255, 255, 0.6)');
-    exhaust.addColorStop(0.5, 'rgba(0, 136, 255, 0.2)');
-    exhaust.addColorStop(1, 'rgba(0, 136, 255, 0)');
-    ctx.fillStyle = exhaust;
-    ctx.beginPath();
-    ctx.arc(0, 0, 12 * engineGlow, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.restore();
+    const isAircraft = this.game.settings.theme === 'aircraft';
 
-    // Outer glow ring
-    ctx.shadowBlur = 25;
-    ctx.shadowColor = '#0ff';
+    if (isAircraft) {
+      ctx.shadowBlur = 10;
+      ctx.shadowColor = 'rgba(0,0,0,0.5)';
+      ctx.fillStyle = '#b0c4de';
+      ctx.strokeStyle = '#2f4f4f';
+      ctx.lineWidth = 1.5;
 
-    // Core ship shape - sleeker design
-    ctx.fillStyle = '#0a0a1a';
-    ctx.strokeStyle = '#0ff';
-    ctx.lineWidth = 2.5;
-
-    ctx.beginPath();
-    ctx.moveTo(18, 0);
-    ctx.lineTo(-10, -14);
-    ctx.lineTo(-4, -4);
-    ctx.lineTo(-8, 0);
-    ctx.lineTo(-4, 4);
-    ctx.lineTo(-10, 14);
-    ctx.closePath();
-    ctx.fill();
-    ctx.stroke();
-
-    // Inner accent lines
-    ctx.strokeStyle = 'rgba(0, 255, 255, 0.4)';
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.moveTo(12, 0);
-    ctx.lineTo(-2, -6);
-    ctx.moveTo(12, 0);
-    ctx.lineTo(-2, 6);
-    ctx.stroke();
-
-    // Core energy diamond
-    ctx.fillStyle = '#0ff';
-    ctx.shadowBlur = 10;
-    ctx.shadowColor = '#0ff';
-    ctx.beginPath();
-    ctx.moveTo(4, 0);
-    ctx.lineTo(0, -3);
-    ctx.lineTo(-4, 0);
-    ctx.lineTo(0, 3);
-    ctx.closePath();
-    ctx.fill();
-
-    // Muzzle flash
-    if (this.muzzleFlash > 0) {
-      ctx.save();
-      ctx.translate(22, 0);
-      const flashSize = 8 + Math.random() * 12;
-      const flashGrad = ctx.createRadialGradient(0, 0, 0, 0, 0, flashSize);
-      flashGrad.addColorStop(0, 'rgba(255, 255, 255, 0.9)');
-      flashGrad.addColorStop(0.3, 'rgba(0, 255, 255, 0.6)');
-      flashGrad.addColorStop(1, 'rgba(0, 255, 255, 0)');
-      ctx.fillStyle = flashGrad;
       ctx.beginPath();
-      ctx.arc(0, 0, flashSize, 0, Math.PI * 2);
+      ctx.ellipse(0, 0, 16, 6, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = '#778899';
+      ctx.beginPath(); ctx.moveTo(2, -5); ctx.lineTo(-4, -18); ctx.lineTo(-10, -18); ctx.lineTo(-6, -5); ctx.fill(); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(2, 5); ctx.lineTo(-4, 18); ctx.lineTo(-10, 18); ctx.lineTo(-6, 5); ctx.fill(); ctx.stroke();
+      
+      ctx.beginPath(); ctx.moveTo(-12, -2); ctx.lineTo(-16, -8); ctx.lineTo(-18, -8); ctx.lineTo(-16, -2); ctx.fill(); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(-12, 2); ctx.lineTo(-16, 8); ctx.lineTo(-18, 8); ctx.lineTo(-16, 2); ctx.fill(); ctx.stroke();
+
+      ctx.fillStyle = '#87ceeb';
+      ctx.beginPath(); ctx.ellipse(4, 0, 4, 2, 0, 0, Math.PI * 2); ctx.fill();
+      
+      ctx.strokeStyle = `rgba(50,50,50, ${0.4 + Math.sin(this.enginePulse*5)*0.2})`;
+      ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(16, -8); ctx.lineTo(16, 8); ctx.stroke();
+
+      if (this.muzzleFlash > 0) {
+        ctx.save(); ctx.translate(18, 0); const flashSize = 6 + Math.random() * 8;
+        const flashGrad = ctx.createRadialGradient(0, 0, 0, 0, 0, flashSize);
+        flashGrad.addColorStop(0, 'rgba(255, 255, 200, 0.9)'); flashGrad.addColorStop(0.5, 'rgba(255, 150, 0, 0.6)'); flashGrad.addColorStop(1, 'rgba(255, 100, 0, 0)');
+        ctx.fillStyle = flashGrad; ctx.beginPath(); ctx.arc(0, 0, flashSize, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+      }
+    } else {
+      // Engine exhaust glow (behind ship)
+      const engineGlow = Math.sin(this.enginePulse) * 0.3 + 0.7;
+      ctx.save();
+      ctx.translate(-14, 0);
+      const exhaust = ctx.createRadialGradient(0, 0, 0, 0, 0, 12 * engineGlow);
+      exhaust.addColorStop(0, 'rgba(0, 255, 255, 0.6)');
+      exhaust.addColorStop(0.5, 'rgba(0, 136, 255, 0.2)');
+      exhaust.addColorStop(1, 'rgba(0, 136, 255, 0)');
+      ctx.fillStyle = exhaust;
+      ctx.beginPath();
+      ctx.arc(0, 0, 12 * engineGlow, 0, Math.PI * 2);
       ctx.fill();
       ctx.restore();
+
+      // Outer glow ring
+      ctx.shadowBlur = 25;
+      ctx.shadowColor = '#0ff';
+
+      // Core ship shape - sleeker design
+      ctx.fillStyle = '#0a0a1a';
+      ctx.strokeStyle = '#0ff';
+      ctx.lineWidth = 2.5;
+
+      ctx.beginPath();
+      ctx.moveTo(18, 0);
+      ctx.lineTo(-10, -14);
+      ctx.lineTo(-4, -4);
+      ctx.lineTo(-8, 0);
+      ctx.lineTo(-4, 4);
+      ctx.lineTo(-10, 14);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+
+      // Inner accent lines
+      ctx.strokeStyle = 'rgba(0, 255, 255, 0.4)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(12, 0);
+      ctx.lineTo(-2, -6);
+      ctx.moveTo(12, 0);
+      ctx.lineTo(-2, 6);
+      ctx.stroke();
+
+      // Core energy diamond
+      ctx.fillStyle = '#0ff';
+      ctx.shadowBlur = 10;
+      ctx.shadowColor = '#0ff';
+      ctx.beginPath();
+      ctx.moveTo(4, 0);
+      ctx.lineTo(0, -3);
+      ctx.lineTo(-4, 0);
+      ctx.lineTo(0, 3);
+      ctx.closePath();
+      ctx.fill();
+
+      // Muzzle flash
+      if (this.muzzleFlash > 0) {
+        ctx.save();
+        ctx.translate(22, 0);
+        const flashSize = 8 + Math.random() * 12;
+        const flashGrad = ctx.createRadialGradient(0, 0, 0, 0, 0, flashSize);
+        flashGrad.addColorStop(0, 'rgba(255, 255, 255, 0.9)');
+        flashGrad.addColorStop(0.3, 'rgba(0, 255, 255, 0.6)');
+        flashGrad.addColorStop(1, 'rgba(0, 255, 255, 0)');
+        ctx.fillStyle = flashGrad;
+        ctx.beginPath();
+        ctx.arc(0, 0, flashSize, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
     }
 
     ctx.restore();

@@ -57,46 +57,75 @@ class Wanderer extends GameObject {
     ctx.arc(0, 0, this.width, 0, Math.PI * 2);
     ctx.fill();
 
-    // Outer hexagon ring
-    ctx.rotate(this.angle);
-    ctx.shadowBlur = 25 * pulse;
-    ctx.shadowColor = '#ff00ff';
-    ctx.strokeStyle = `rgba(255, 0, 255, ${0.5 + pulse * 0.5})`;
-    ctx.lineWidth = 2;
+    if (this.game.settings.theme === 'aircraft') {
+      ctx.shadowBlur = 10 * pulse;
+      ctx.shadowColor = 'rgba(0,0,0,0.5)';
+      
+      ctx.rotate(this.angle); // Spin UFO
+      ctx.fillStyle = '#888888';
+      ctx.beginPath();
+      ctx.ellipse(0, 0, this.width/2, this.height/4, 0, 0, Math.PI * 2);
+      ctx.fill();
+      
+      // UFO canopy
+      ctx.fillStyle = '#add8e6';
+      ctx.beginPath();
+      ctx.ellipse(0, -this.height/8, this.width/4, this.height/6, 0, 0, Math.PI * 2);
+      ctx.fill();
 
-    ctx.beginPath();
-    for (let i = 0; i < 6; i++) {
-      const a = (i / 6) * Math.PI * 2;
-      const hx = Math.cos(a) * (this.width / 2);
-      const hy = Math.sin(a) * (this.height / 2);
-      if (i === 0) ctx.moveTo(hx, hy);
-      else ctx.lineTo(hx, hy);
+      // UFO lights
+      const numLights = 5;
+      for(let i=0; i<numLights; i++) {
+        const a = (i/numLights) * Math.PI * 2 + this.innerAngle;
+        const lx = Math.cos(a) * (this.width/2.5);
+        const ly = Math.sin(a) * (this.height/4.5);
+        ctx.fillStyle = (i%2===0) ? '#ff0000' : '#00ff00';
+        ctx.beginPath();
+        ctx.arc(lx, ly, 2, 0, Math.PI*2);
+        ctx.fill();
+      }
+    } else {
+      // Outer hexagon ring
+      ctx.rotate(this.angle);
+      ctx.shadowBlur = 25 * pulse;
+      ctx.shadowColor = '#ff00ff';
+      ctx.strokeStyle = `rgba(255, 0, 255, ${0.5 + pulse * 0.5})`;
+      ctx.lineWidth = 2;
+
+      ctx.beginPath();
+      for (let i = 0; i < 6; i++) {
+        const a = (i / 6) * Math.PI * 2;
+        const hx = Math.cos(a) * (this.width / 2);
+        const hy = Math.sin(a) * (this.height / 2);
+        if (i === 0) ctx.moveTo(hx, hy);
+        else ctx.lineTo(hx, hy);
+      }
+      ctx.closePath();
+      ctx.stroke();
+      ctx.fillStyle = `rgba(255, 0, 255, ${0.08 + pulse * 0.05})`;
+      ctx.fill();
+
+      // Inner counter-rotating triangle
+      ctx.rotate(this.innerAngle - this.angle);
+      ctx.strokeStyle = `rgba(200, 100, 255, ${0.4 * pulse})`;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      for (let i = 0; i < 3; i++) {
+        const a = (i / 3) * Math.PI * 2;
+        const tx = Math.cos(a) * (this.width / 4);
+        const ty = Math.sin(a) * (this.height / 4);
+        if (i === 0) ctx.moveTo(tx, ty);
+        else ctx.lineTo(tx, ty);
+      }
+      ctx.closePath();
+      ctx.stroke();
+
+      // Core dot
+      ctx.fillStyle = `rgba(255, 180, 255, ${pulse})`;
+      ctx.beginPath();
+      ctx.arc(0, 0, 3, 0, Math.PI * 2);
+      ctx.fill();
     }
-    ctx.closePath();
-    ctx.stroke();
-    ctx.fillStyle = `rgba(255, 0, 255, ${0.08 + pulse * 0.05})`;
-    ctx.fill();
-
-    // Inner counter-rotating triangle
-    ctx.rotate(this.innerAngle - this.angle);
-    ctx.strokeStyle = `rgba(200, 100, 255, ${0.4 * pulse})`;
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    for (let i = 0; i < 3; i++) {
-      const a = (i / 3) * Math.PI * 2;
-      const tx = Math.cos(a) * (this.width / 4);
-      const ty = Math.sin(a) * (this.height / 4);
-      if (i === 0) ctx.moveTo(tx, ty);
-      else ctx.lineTo(tx, ty);
-    }
-    ctx.closePath();
-    ctx.stroke();
-
-    // Core dot
-    ctx.fillStyle = `rgba(255, 180, 255, ${pulse})`;
-    ctx.beginPath();
-    ctx.arc(0, 0, 3, 0, Math.PI * 2);
-    ctx.fill();
 
     ctx.restore();
   }
